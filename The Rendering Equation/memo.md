@@ -58,7 +58,7 @@ $$
 dE &= g(x,x')\epsilon(x,x')dtdxdx'\\
 &= \frac{1}{r^2}\epsilon(x,x')dtdxdx' 
 \end{align}
-\tag 3
+\tag 3
 $$
 $\epsilon(x,x')$的单位为$joule/m^2sec$
 
@@ -227,6 +227,9 @@ dB(x') = dx'\int \{ &g(x,x')\epsilon(x,x')\\
 \end{align} \tag{16}
 $$
 如果在$x$和$x'$之间有遮挡，那么散射项(emittance term)是0. 
+
+> 几何项g = $\frac 1 {r^2}$. 下面是非遮挡的公式。
+
 $$
 \begin{align}
 dB_e(x') & = dx'\int\frac{\epsilon(x,x')}{r^2}dx \\
@@ -241,7 +244,28 @@ $\epsilon_0$是表面元$dx'$的散射半球(hemispherical emittance)的积分�
 与反射项(reflectance term)类似，如果表面被遮挡，辐射强度也是0. 因此我们可以得到：
 $$
 \begin{align}
-dB_r(x') = dx'\int\frac{1}{r^2}\int\rho(x,x',x'')I(x',x'')dx''dx\\
-
-\end{align}
+dB_r(x') &= dx'\int\frac{1}{r^2}\int\rho(x,x',x'')I(x',x'')dx''dx\\
+&=dx'\int\frac{1}{r_2}\rho(\theta',\phi',\psi',\sigma')cos\theta\cos\theta'dx\times \int I(x',x'')dx'' \\
+&=dx'\rho_0\int cos\theta d\omega\int I(x',x'')dx''\\
+& = dx'\rho_0\pi H(x')
+\end{align} \tag{18}
 $$
+其中$H$是半球每秒每单位面积的入射能量。
+
+在上式中，我们使用了公式(13),(12)和(14)并且变换了积分顺序。
+
+然后将公式(17)(18)代入公式(16)，我们得到：
+$$
+dB(x') = \pi[\epsilon_0 + \rho_0H(x')]dx'\tag{19}
+$$
+Which is equation (4) in Goral et. al.[1984].
+
+> “与文章(Goral等[1984])中的公式(4)如出一辙”. 
+
+在计算最终矩阵$F_{ij}$中，积分$H$的计算是一个重头。显然，它的时间复杂度非常高。该矩阵的计算使用了一些近似(relaxation)公式，相当于计算了诺伊曼级数(Neumann series)的前几项：计算散射光的大概4次投射(progating the emitters across four or so scatterers)。近似(relaxation)反映了场景中所有表面的强度。使用这些近似需要计算整个矩阵。在某些情况下，这些反而是优点。比如下面将要介绍的蒙特卡洛方法(monte carlo method)。
+
+> 这段没怎么懂，翻译得迷迷糊糊。
+
+## 4. Markov chains for solving integral equations 使用马尔科夫链求解积分方程
+
+积分方程的数值解经常使用马尔科夫链的方法来解决。该方法广泛出现在各个领域来进行理论分析和自然物理量的传递。蒙特卡洛马尔科夫链(monte carlo Markov chain)已经拿来实用很久了[Siegel and Howell 1981]。比如用来计算热辐射。热辐射从辐射源以一定的波长散射、反射然后被封闭空间吸收。计算每一次吸收和反射明显是一个不好对付的问题。热辐射的计算近似于追踪光源的光线抵达眼睛。但是与热辐射不同，我们要用更直接的方式，回到...(Rather than follow these methods, we will choose to solve eq.(1) more directly going back to an early monte carlo method first put forth by von Neumann and Ulam[Rubenstein 1981])
